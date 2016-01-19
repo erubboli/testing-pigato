@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+var stocks = require("./../workers/stocks.js");
+stocks.run("tcp://localhost:55555");
