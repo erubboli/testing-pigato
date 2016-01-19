@@ -3,10 +3,10 @@ var client = new pigato.Client('tcp://localhost:55555');
 client.start();
 var http = require('http');
 
-var remote = function(symbol, handler) {
+var remote = function(symbol, dataHandler, endHandler) {
     client.request('stockPrices', {symbol: symbol}, { timeout: 90000 })
-        .on('data', handler)
-        .on('end', handler)
+        .on('data', dataHandler)
+        .on('end', endHandler)
 };
 
 exports.remote = remote;

@@ -4,8 +4,11 @@ var stocks = require("./../resources/stocks.js");
 
 /* GET prices list */
 router.get('/stocks/:symbol', function(req, res, next){
+    response=''
     stocks.remote(req.params.symbol, function(data){
-        res.json(data);
+        response = response+data;
+    }, function(){
+        res.json(response);
     });
 });
 

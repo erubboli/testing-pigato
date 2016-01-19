@@ -8,8 +8,8 @@ var urlFor= function(symbol) {
     var today = moment();
     var yesterday = moment().subtract(1, 'days');
     var url="http://ichart.finance.yahoo.com/table.csv?s=" + symbol + 
-        "&a=" + today.format('d') + "&b=" + today.format('m') +"&c=" + today.format('YYYY') + "&d=" +
-        yesterday.format('d')+ "&e=" + yesterday.format('m') + "&f=" + yesterday.format('YYYY')+ "&g=d&ignore=.csv";
+        "&a=" + yesterday.format('D') + "&b=" + yesterday.format('M') +"&c=" + yesterday.format('YYYY') + "&d=" +
+        today.format('D')+ "&e=" + today.format('M') + "&f=" + today.format('YYYY')+ "&g=d&ignore=.csv";
     console.log(url);
     return url;
 }
