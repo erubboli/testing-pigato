@@ -11,7 +11,7 @@
       $(".getStockPrice").on("click", function(){
         symbol= $("#symbol").val();
         $.getJSON( "/api/stocks/"+symbol, function( data ) {
-          $(".prices").text(data)
+          $(".prices").text(symbol + "=" + data)
         });
         return false;
       });

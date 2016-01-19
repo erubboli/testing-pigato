@@ -10,16 +10,23 @@ var urlFor= function(symbol) {
     var url="http://ichart.finance.yahoo.com/table.csv?s=" + symbol + 
         "&a=" + yesterday.format('D') + "&b=" + yesterday.format('M') +"&c=" + yesterday.format('YYYY') + "&d=" +
         today.format('D')+ "&e=" + today.format('M') + "&f=" + today.format('YYYY')+ "&g=d&ignore=.csv";
-    console.log(url);
     return url;
 }
 
-// Retrieve prices from Yahoo
+// Retrieve only the most recent price from Yahoo
 var getPricesFromYahoo = function(symbol,out) {
+    csv = '';
+    line = 0;
     http.get(urlFor(symbol), function(res) {
         res.on('data', function(chunk) {
-            out.write(String(chunk));
+            if(line == 2){
+                csv = String(chunk);
+            }
+            line += 1;
         }).on('end', function() {
+            // Date,Open,High,Low,Close,Volume,Adj Close
+            var closePrice = csv.split(',')[4];
+            out.write(closePrice);
             out.end('');
         });
     });
