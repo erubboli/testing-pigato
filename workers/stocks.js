@@ -15,19 +15,18 @@ var urlFor= function(symbol) {
 
 // Retrieve only the most recent price from Yahoo
 var getPriceFromYahoo = function(symbol,onSuccess,onError) {
-    var csv = ''
-      , line = 0
+    var line = 0
       , closePrice; 
 
     http.get(urlFor(symbol), function(res) {
         res.on('data', function(chunk) {
             if(line == 2){
-                csv = String(chunk);
+                var csv = String(chunk);
+                //CSV: Date,Open,High,Low,Close,Volume,Adj Close
+                closePrice = csv.split(',')[4];
             }
             line += 1;
         }).on('end', function() {
-            //CSV: Date,Open,High,Low,Close,Volume,Adj Close
-            closePrice = csv.split(',')[4];
             onSuccess(closePrice);
         }).on('error', function(e){
             onError(e)
@@ -35,7 +34,7 @@ var getPriceFromYahoo = function(symbol,onSuccess,onError) {
     });
 }
 
-var savePriceToDB = function(symbol,price){
+var savePriceToDB = function(symbol,price) {
     db.run("INSERT INTO prices (symbol,price,date) VALUES (?,?,CURRENT_DATE)", [symbol,price]);
 }
 
@@ -62,19 +61,23 @@ var ensureDBStructure = function() {
 }
 
 var getStockPrice = function(symbol, out) {
-    console.log("getting price for "+symbol);
-    getPriceFromDB(symbol, function(price) { //success DB
-        console.log("Retrive price from DB");
+
+    getPriceFromDB(symbol, function(price) {
+        console.log("Retrieve price from DB");
         out.write(price);
         out.end('');
-    }, function(){ // fail DB
+
+    }, function(){ 
         console.log("Error Retrieving today's price from DB")
-        getPriceFromYahoo(symbol, function(price) {//success Yahoo
+
+        getPriceFromYahoo(symbol, function(price) {
+            console.log("Retrieving price from Yahoo: "+price);
             savePriceToDB(symbol,price);
             out.write(price);
             out.end('');
-        }, function(e) { // Fail Yahoo
-            console.log("Error retriving price from Yahoo: "+e);
+
+        }, function(e) { 
+            console.log("Error retrieving price from Yahoo: "+e);
             out.end('');
         });
     });
